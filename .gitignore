@@ -1,0 +1,14 @@
+.vscode
+opencv
+build_opencv
+build_opencv
+opencv_contrib
+
+line.py
+lineLog.txt
+
+mov_0087.mp4
+testvideo2.mp4
+
+track.*
+track2.*
