@@ -11,6 +11,16 @@ def lineCluster(lines):
     significants = []
 
     for points_ in  npSample:
+
+        stretched = stretchLine(points_[0,0],points_[0,1],points_[0,2],points_[0,3])
+        
+        if stretched is False:
+            continue
+
+        else: 
+            points_[0] = stretched
+
+
         xs = [points_[0,0],points_[0,2]]
         ys = [points_[0,1],points_[0,3]]
         
@@ -32,7 +42,9 @@ def lineCluster(lines):
             if not changedFlag:
                 significants.append([theta,points_])
     
-    return significants
+
+    return get2lines(significants)
+    
     
 
 def isCloseLine(sig, theta, points_):
@@ -63,6 +75,69 @@ def isCloseLine(sig, theta, points_):
 
     return False
 
+def stretchLine(x1,y1,x2,y2):
+  
+    # 직선 구하기 y = ax +b  , x = (y-b)/a -> 직선 검출 후 화면 양 끝까지 땡김
+    if abs(x2-x1) <0.01:
+        return False
 
-#if __name__ =="__main__":
-#    lineCluster()
+    a = (y2 - y1)/(x2 - x1)
+    b = y2 - a*x2
+
+    if abs(a)< 0.1:
+        return False
+
+    newX1 = -b/a
+    newY1 = 0
+    newX2 = (1080-b)/a
+    newY2 = 1080
+    print("streteched:  ", [newX1,newY1,newX2,newY2])
+    return np.array([newX1,newY1,newX2,newY2])
+
+
+def get2lines(significants):
+    size = len(significants)
+    print( "size : " , size)
+    print("111",significants)
+    if size <=1 :
+        return []
+    
+    if size == 2:
+        return significants
+    
+    if size > 6:
+        return []
+    
+    minCoherence = math.inf
+    minLeft, minRight = [0,1]
+
+    for i in range(0,size):
+        for j in range(i+1,size):
+            left = significants[i][1][0]
+            right = significants[j][1][0]
+            print("left",left)
+            print("right:" ,right, " -> ")
+            right[0] = 1920 - right[0] # 점대칭 ->프레임 크기 맞춰서 파라미터 수정 
+            right[2] = 1920 - right[2]
+            print(right)    
+            right[0] = 1920 - right[0] # 점대칭 ->프레임 크기 맞춰서 파라미터 수정 
+            right[2] = 1920 - right[2]
+            
+
+        
+            if minCoherence > getCoherence(left,right):
+                minCoherence = getCoherence(left,right)
+                minleft,minRight = i, j 
+    print(significants)
+    print( minLeft,minRight)
+    return [significants[minLeft],significants[minRight]]
+
+def getCoherence(left,right):
+    return abs(left[0] - right[0]) + abs(left[2] - right[2])
+
+
+    
+
+
+ 
+    

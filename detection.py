@@ -40,7 +40,7 @@ while(cap.isOpened()):
 
     mask = np.zeros((snip.shape[0], snip.shape[1]), dtype="uint8") # snip 크기의 마스크 [0]으로 되어있음 
     cv2.imshow("test",mask)
-    pts = np.array([[400, 800], [600, 300], [1320, 300], [1520, 800]], dtype=np.int32) # 해당 범위에 비트 and wise calculation -> othes are black 
+    pts = np.array([[400, 1080], [600, 300], [1320, 300], [1520, 1080]], dtype=np.int32) # 해당 범위에 비트 and wise calculation -> othes are black 
     # pts 필터 적용할 크기 멀수록 작아 보여서 마름모 
     cv2.fillConvexPoly(mask, pts,255) # fillconvexPoly : 꽉찬 다각형, 255(가장 흰색) 로 채운다.
     cv2.imshow("Mask", mask)
@@ -69,7 +69,7 @@ while(cap.isOpened()):
     #lines = cv2.HoughLines(edged, 0.8, np.pi / 180, 150, srn = 100, stn = 200, min_theta = 0, max_theta = np.pi)
     #print(lines)
 
-    lines = cv2.HoughLinesP(edged, 0.8, np.pi / 180, 50, minLineLength = 300, maxLineGap = 100)
+    lines = cv2.HoughLinesP(edged, 0.8, np.pi / 180, 50, minLineLength = 400, maxLineGap = 100)
     whiteBox = np.ones((snip.shape[0], snip.shape[1]), dtype="uint8") * 255
     whiteBox2 = np.ones((snip.shape[0], snip.shape[1]), dtype="uint8") * 255
     # f = open("lineLog.txt","a+")
@@ -81,6 +81,8 @@ while(cap.isOpened()):
         #f.write("\n\n line ")
 
         clusteredLines = lineCluster(lines)
+        print("\n clustered \n")
+        print(clusteredLines)
 
         for i in lines:
             cv2.line(whiteBox, (i[0][0], i[0][1]), (i[0][2], i[0][3]), (0, 0, 255), 2)
@@ -93,7 +95,7 @@ while(cap.isOpened()):
 
         for cline in clusteredLines:
             cline = cline[1].astype(np.int32)
-            print("int cline : ", cline)
+            #print("int cline : ", cline)
             cv2.line(whiteBox2, (cline[0,0], cline[0,1] ), (cline[0,2], cline[0,3]),(0, 0, 255), 2 )
         cv2.imshow("clustered", whiteBox2)
 

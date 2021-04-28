@@ -36,15 +36,31 @@ def solution():
     npSample = np.array(sample)
     endPoints = []
     plt.figure()
-
     significants = []
 
     for points_ in  npSample:
-        print(points_)
-        xs = [points_[0],points_[2]]
-        ys = [points_[1],points_[3]]
+        print("points : ", points_)
+        # 전체 크기 가로 0 - 1920 , 세로 : 0:1080
+        # 세로 0, 1080 짜리 라인으로 바꾸자.
+
+        x1_,y1_ = points_[0], points_[1]
+        x2_,y2_ = points_[2], points_[3]
+
+        # 직선 구하기 y = ax +b  , x = (y-b)/a
+        a = (y2_ - y1_)/(x2_ - x1_)
+        b = y2_ - a*x2_
+
+        newX1 = -b/a
+        newY1 = 0
+        newX2 = (1080-b)/a
+        newY2 = 1080
+
+        xs = [newX1,newX2]
+        ys = [newY1,newY2]
+        print( [newX1,newY1] , [newX2,newY2])
+        points_ = np.array([newX1,newY1,newX2,newY2])
         
-#        tan = (ys[1] - ys[0]) / (xs[1] - xs[0] +0.0)
+#       tan = (ys[1] - ys[0]) / (xs[1] - xs[0] +0.0)
 #       print("tan", tan)
         theta = np.arctan2(ys[1] - ys[0], xs[1] - xs[0])/np.pi
 
@@ -58,6 +74,8 @@ def solution():
             for sig in significants:
                 if abs(sig[0] - theta) < 0.05 and isCloseLine(sig, theta, points_): #isCloseLine(sig, theta, points_)
                     sig[0] = (sig[0] + theta )/2
+                    print("sigg[1]", sig[1])
+                    print("points_ ", points_)
                     sig[1] = (sig[1] + points_)/2
                     changedFlag = True
                     break
